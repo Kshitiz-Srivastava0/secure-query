@@ -30,29 +30,21 @@ def temp_keys_dir():
 
 
 @pytest.fixture
-def test_app(temp_keys_dir):
+def test_app(temp_keys_dir, monkeypatch):
     """Create test FastAPI app with temporary keys."""
     app = FastAPI()
 
-    # Patch settings to use temp directory
-    with (
-        patch("secure_query.router.ensure_keys"),
-        patch("secure_query.crypto.settings") as mock_settings,
-    ):
+    # Create test settings and generate keys
+    test_settings = Settings(temp_keys_dir)
 
-        test_settings = Settings(temp_keys_dir)
-        mock_settings.private_key_file = test_settings.private_key_file
-        mock_settings.public_key_file = test_settings.public_key_file
-        mock_settings.keys_dir = test_settings.keys_dir
+    # Generate test keys
+    from secure_query.crypto import ensure_keys
+    monkeypatch.setattr("secure_query.crypto.settings", test_settings)
+    ensure_keys()
 
-        # Generate test keys
-        from secure_query.crypto import ensure_keys
-
-        with patch("secure_query.crypto.settings", test_settings):
-            ensure_keys()
-
-        app.include_router(router)
-        yield app
+    # Add router with patched settings
+    app.include_router(router)
+    yield app
 
 
 @pytest.fixture
@@ -151,9 +143,9 @@ def test_rate_limit_window_expiry():
     client_ip = "127.0.0.1"
 
     # Mock time to test window expiry
-    with patch("secure_query.router.time.time") as mock_time:
+    with patch("secure_query.router.time") as mock_time_module:
         # Start at time 0
-        mock_time.return_value = 0
+        mock_time_module.time.return_value = 0
 
         # Fill up the rate limit
         for _ in range(DECRYPT_RATE_LIMIT):
@@ -163,7 +155,7 @@ def test_rate_limit_window_expiry():
         assert _check_rate_limit(client_ip) is False
 
         # Move time forward past window
-        mock_time.return_value = 61  # 61 seconds later
+        mock_time_module.time.return_value = 61  # 61 seconds later
 
         # Should be allowed again
         assert _check_rate_limit(client_ip) is True
