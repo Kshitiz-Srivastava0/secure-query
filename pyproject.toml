@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "secure-query"
+version = "0.1.0"
+description = "Encrypt query payloads in frontend and decrypt in FastAPI using RSA-OAEP encryption with built-in security features."
+readme = "README.md"
+authors = [{ name = "Secure Query Contributors", email = "contributors@secure-query.dev" }]
+maintainers = [{ name = "Secure Query Contributors", email = "contributors@secure-query.dev" }]
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = [
+    "encryption", "security", "fastapi", "rsa", "oaep", "crypto", "privacy",
+    "query", "payload", "frontend", "backend", "web", "api"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: FastAPI",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Typing :: Typed",
+]
+dependencies = [
+  "cryptography>=42,<45"
+]
+
+[project.urls]
+Homepage = "https://github.com/Kshitiz-Srivastava0/secure-query"
+Documentation = "https://github.com/Kshitiz-Srivastava0/secure-query#readme"
+Repository = "https://github.com/Kshitiz-Srivastava0/secure-query.git"
+"Bug Tracker" = "https://github.com/Kshitiz-Srivastava0/secure-query/issues"
+Changelog = "https://github.com/Kshitiz-Srivastava0/secure-query/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+fastapi = [
+  "fastapi>=0.110,<1.0",
+]
+test = [
+  "pytest>=7.0",
+  "pytest-cov>=4.0",
+  "fastapi>=0.110,<1.0",
+  "httpx>=0.24.0",  # Required for TestClient
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["secure_query"]
+include-package-data = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=secure_query",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-fail-under=90"
+]
