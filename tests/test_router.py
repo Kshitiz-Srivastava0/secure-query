@@ -3,7 +3,7 @@
 import base64
 import json
 import tempfile
-import time
+import time  # noqa: F401 - used in patch
 from pathlib import Path
 from unittest.mock import patch
 

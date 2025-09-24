@@ -4,8 +4,6 @@ import os
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from secure_query.settings import DEFAULT_KEYS_DIR, Settings
 
 
@@ -103,7 +101,7 @@ def test_keys_dir_permissions():
     """Test that keys directory has appropriate permissions."""
     with tempfile.TemporaryDirectory() as temp_dir:
         keys_dir = Path(temp_dir) / "test_keys"
-        settings = Settings(keys_dir)
+        Settings(keys_dir)  # Create settings to initialize directory
 
         # Check that directory was created and is accessible
         assert keys_dir.exists()

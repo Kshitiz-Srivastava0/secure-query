@@ -28,7 +28,7 @@ def run_command(cmd, description):
 
 def main():
     """Simulate GitHub Actions environment."""
-    print("🐙 GitHub Actions Debug Script")
+    print("GitHub Actions Debug Script")
     print(f"Python version: {sys.version}")
     print(f"Current directory: {os.getcwd()}")
     print(f"Python path: {sys.path}")
@@ -68,7 +68,7 @@ def main():
 
     # Step 7: Run linting (if tools available)
     print(f"\n{'='*60}")
-    print("🧹 Linting checks")
+    print("Linting checks")
     print(f"{'='*60}")
 
     # Install linting tools
@@ -79,7 +79,7 @@ def main():
     run_command("isort --check-only src/ tests/ --profile=black", "Check import sorting")
     run_command("flake8 src/ tests/ --max-line-length=88 --extend-ignore=E203,W503", "Lint with flake8")
 
-    print(f"\n🎉 All checks completed successfully!")
+    print(f"\nAll checks completed successfully!")
     print("Your package should work fine in GitHub Actions.")
 
     return 0
