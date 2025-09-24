@@ -1,9 +1,12 @@
 """Tests for settings module."""
-import pytest
-import tempfile
+
 import os
+import tempfile
 from pathlib import Path
-from secure_query.settings import Settings, DEFAULT_KEYS_DIR
+
+import pytest
+
+from secure_query.settings import DEFAULT_KEYS_DIR, Settings
 
 
 def test_default_settings():
@@ -49,7 +52,9 @@ def test_environment_variable_override():
         try:
             # Import settings module to get fresh DEFAULT_KEYS_DIR
             import importlib
+
             import secure_query.settings
+
             importlib.reload(secure_query.settings)
 
             settings = secure_query.settings.Settings()

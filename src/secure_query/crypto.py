@@ -1,8 +1,12 @@
 from __future__ import annotations
-import base64, json
-from typing import Dict, Any
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
+
+import base64
+import json
+from typing import Any, Dict
+
 from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
+
 from .settings import settings
 
 __all__ = [
@@ -10,6 +14,7 @@ __all__ = [
     "get_public_key_pem",
     "decrypt_b64url_payload",
 ]
+
 
 def ensure_keys() -> None:
     """Generate RSA keypair if missing."""
@@ -32,17 +37,21 @@ def ensure_keys() -> None:
         )
     )
 
+
 def get_public_key_pem() -> str:
     return settings.public_key_file.read_text()
+
 
 def _b64url_to_bytes(data: str) -> bytes:
     pad = "=" * (-len(data) % 4)
     return base64.urlsafe_b64decode(data + pad)
 
+
 def _load_private_key():
     return serialization.load_pem_private_key(
         settings.private_key_file.read_bytes(), password=None
     )
+
 
 def decrypt_b64url_payload(ciphertext_b64url: str) -> Dict[str, Any]:
     """Decrypt base64url(RSA-OAEP(SHA256)) → dict"""
@@ -51,7 +60,9 @@ def decrypt_b64url_payload(ciphertext_b64url: str) -> Dict[str, Any]:
     pt = pk.decrypt(
         ct,
         padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None,
         ),
     )
     return json.loads(pt.decode("utf-8"))

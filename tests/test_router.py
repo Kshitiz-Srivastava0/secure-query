@@ -1,17 +1,24 @@
 """Tests for router module including security edge cases."""
-import pytest
-import json
+
 import base64
-import time
+import json
 import tempfile
+import time
 from pathlib import Path
 from unittest.mock import patch
-from fastapi.testclient import TestClient
-from fastapi import FastAPI
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes, serialization
 
-from secure_query.router import router, _check_rate_limit, _rate_limit_storage, DECRYPT_RATE_LIMIT
+import pytest
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+from secure_query.router import (
+    DECRYPT_RATE_LIMIT,
+    _check_rate_limit,
+    _rate_limit_storage,
+    router,
+)
 from secure_query.settings import Settings
 
 
@@ -28,8 +35,10 @@ def test_app(temp_keys_dir):
     app = FastAPI()
 
     # Patch settings to use temp directory
-    with patch('secure_query.router.ensure_keys'), \
-         patch('secure_query.crypto.settings') as mock_settings:
+    with (
+        patch("secure_query.router.ensure_keys"),
+        patch("secure_query.crypto.settings") as mock_settings,
+    ):
 
         test_settings = Settings(temp_keys_dir)
         mock_settings.private_key_file = test_settings.private_key_file
@@ -38,7 +47,8 @@ def test_app(temp_keys_dir):
 
         # Generate test keys
         from secure_query.crypto import ensure_keys
-        with patch('secure_query.crypto.settings', test_settings):
+
+        with patch("secure_query.crypto.settings", test_settings):
             ensure_keys()
 
         app.include_router(router)
@@ -74,7 +84,7 @@ def test_decrypt_endpoint_success(client, temp_keys_dir):
 
     # Create test payload
     test_payload = {"user": "alice", "query": "SELECT * FROM users"}
-    plaintext = json.dumps(test_payload).encode('utf-8')
+    plaintext = json.dumps(test_payload).encode("utf-8")
 
     # Encrypt
     ciphertext = public_key.encrypt(
@@ -82,12 +92,12 @@ def test_decrypt_endpoint_success(client, temp_keys_dir):
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
-            label=None
-        )
+            label=None,
+        ),
     )
 
     # Encode as base64url
-    ciphertext_b64url = base64.urlsafe_b64encode(ciphertext).decode('ascii').rstrip('=')
+    ciphertext_b64url = base64.urlsafe_b64encode(ciphertext).decode("ascii").rstrip("=")
 
     # Test decryption
     response = client.get(f"/secure-query/decrypt?data={ciphertext_b64url}")
@@ -141,7 +151,7 @@ def test_rate_limit_window_expiry():
     client_ip = "127.0.0.1"
 
     # Mock time to test window expiry
-    with patch('secure_query.router.time.time') as mock_time:
+    with patch("secure_query.router.time.time") as mock_time:
         # Start at time 0
         mock_time.return_value = 0
 
@@ -224,7 +234,7 @@ def test_error_message_does_not_leak_info(client):
     invalid_inputs = [
         "invalid_base64!@#",
         "dGVzdA",  # Valid base64 but not encrypted data
-        "",        # Empty string
+        "",  # Empty string
         "A" * 4096,  # Max length valid base64 but invalid ciphertext
     ]
 
