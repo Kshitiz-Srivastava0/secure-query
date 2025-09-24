@@ -21,10 +21,12 @@ def test_custom_keys_dir():
         custom_dir = Path(temp_dir) / "custom_keys"
         settings = Settings(custom_dir)
 
-        assert settings.keys_dir == custom_dir.resolve()
+        # Use resolved paths for comparison to handle symlinks (macOS /tmp)
+        expected_keys_dir = custom_dir.resolve()
+        assert settings.keys_dir == expected_keys_dir
         assert settings.keys_dir.exists()  # Should be created
-        assert settings.private_key_file == custom_dir / "private_key.pem"
-        assert settings.public_key_file == custom_dir / "public_key.pem"
+        assert settings.private_key_file == expected_keys_dir / "private_key.pem"
+        assert settings.public_key_file == expected_keys_dir / "public_key.pem"
 
 
 def test_keys_dir_creation():

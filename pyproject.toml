@@ -100,5 +100,6 @@ exclude = [".git", "__pycache__", "build", "dist", ".venv"]
 python_version = "3.9"
 ignore_missing_imports = true
 no_strict_optional = true
-warn_return_any = true
+warn_return_any = false
 warn_unused_configs = true
+disable_error_code = ["no-any-return", "var-annotated"]

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 from collections import defaultdict
+from typing import DefaultDict, List
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
@@ -10,7 +11,7 @@ from .crypto import decrypt_b64url_payload, ensure_keys, get_public_key_pem
 router = APIRouter(prefix="/secure-query", tags=["Secure Query"])
 
 # Rate limiting (in-memory, replace with Redis for production)
-_rate_limit_storage = defaultdict(list)
+_rate_limit_storage: DefaultDict[str, List[float]] = defaultdict(list)
 DECRYPT_RATE_LIMIT = 10  # requests per minute
 RATE_LIMIT_WINDOW = 60  # seconds
 

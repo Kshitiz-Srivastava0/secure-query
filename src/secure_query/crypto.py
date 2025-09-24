@@ -65,4 +65,5 @@ def decrypt_b64url_payload(ciphertext_b64url: str) -> Dict[str, Any]:
             label=None,
         ),
     )
-    return json.loads(pt.decode("utf-8"))
+    result: Dict[str, Any] = json.loads(pt.decode("utf-8"))
+    return result
