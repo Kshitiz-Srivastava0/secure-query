@@ -126,6 +126,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-'))
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
 
     steps:
     - name: Download build artifacts
@@ -151,8 +155,6 @@ jobs:
     - name: Create GitHub Release
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       uses: softprops/action-gh-release@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
@@ -164,8 +166,13 @@ jobs:
           ## Installation
 
           ```bash
-          pip install secure-query==${{ github.ref_name }}
+          pip install secure-query
           ```
+
+          ## PyPI Package
+
+          This release is automatically published to PyPI: https://pypi.org/project/secure-query/
 
         draft: false
         prerelease: ${{ contains(github.ref, '-') }}
+        generate_release_notes: true
