@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "secure-query"
-version = "0.1.0"
+version = "0.1.4"
 description = "Encrypt query payloads in frontend and decrypt in FastAPI using RSA-OAEP encryption with built-in security features."
 readme = "README.md"
 authors = [{ name = "Secure Query Contributors", email = "contributors@secure-query.dev" }]
