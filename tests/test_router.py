@@ -143,8 +143,8 @@ def test_rate_limit_window_expiry():
 
     client_ip = "127.0.0.1"
 
-    # Mock time to test window expiry
-    with patch("secure_query.router.time.time") as mock_time:
+    # Mock time.time directly since it's imported in the router module
+    with patch("time.time") as mock_time:
         # Start at time 0
         mock_time.return_value = 0
 
