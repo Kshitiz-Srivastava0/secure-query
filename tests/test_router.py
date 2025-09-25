@@ -39,6 +39,7 @@ def test_app(temp_keys_dir, monkeypatch):
 
     # Generate test keys
     from secure_query.crypto import ensure_keys
+
     monkeypatch.setattr("secure_query.crypto.settings", test_settings)
     ensure_keys()
 
@@ -143,9 +144,9 @@ def test_rate_limit_window_expiry():
     client_ip = "127.0.0.1"
 
     # Mock time to test window expiry
-    with patch("secure_query.router.time") as mock_time_module:
+    with patch("secure_query.router.time.time") as mock_time:
         # Start at time 0
-        mock_time_module.time.return_value = 0
+        mock_time.return_value = 0
 
         # Fill up the rate limit
         for _ in range(DECRYPT_RATE_LIMIT):
@@ -155,7 +156,7 @@ def test_rate_limit_window_expiry():
         assert _check_rate_limit(client_ip) is False
 
         # Move time forward past window
-        mock_time_module.time.return_value = 61  # 61 seconds later
+        mock_time.return_value = 61  # 61 seconds later
 
         # Should be allowed again
         assert _check_rate_limit(client_ip) is True
