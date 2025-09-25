@@ -85,15 +85,20 @@ def test_string_keys_dir():
 def test_relative_path_resolution():
     """Test that relative paths are resolved correctly."""
     with tempfile.TemporaryDirectory() as temp_dir:
-        # Change to temp directory
+        # Change to temp directory BEFORE creating Settings
         old_cwd = os.getcwd()
-        os.chdir(temp_dir)
 
         try:
+            os.chdir(temp_dir)
+
+            # Now create Settings with relative path - it should resolve to temp directory
             settings = Settings("relative_keys")
             expected_path = Path(temp_dir).resolve() / "relative_keys"
+
+            # The settings should have resolved the relative path to absolute
             assert settings.keys_dir == expected_path
             assert settings.keys_dir.exists()
+            assert settings.keys_dir.is_absolute()
 
         finally:
             os.chdir(old_cwd)
